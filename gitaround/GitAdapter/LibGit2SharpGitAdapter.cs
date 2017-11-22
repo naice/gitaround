@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace gitaround.GitAdapter
 {
-    internal class LibGit2SharpGitAdapter : IGitAdapter, IDisposable
+    internal class LibGit2SharpGitAdapter : IGitAdapter
     {
         private readonly ILogger _logger;
         private Repository _repository;
@@ -24,11 +24,6 @@ namespace gitaround.GitAdapter
         }
 
         public void CloseRepository()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
         {
             if (_repository != null)
             {

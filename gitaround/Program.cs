@@ -1,4 +1,5 @@
 ﻿using SimpleInjector;
+using SimpleInjector.Lifestyles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace gitaround
         private static Container CreateIoCContainer(string[] args)
         {
             var container = new Container();
+            container.Options.DefaultScopedLifestyle = new ThreadScopedLifestyle();
+
             // Iteration 0
             container.Register<Model.ApplicationPath>(Lifestyle.Singleton);
             container.Register(() => new Model.CommandLineArgs(args), Lifestyle.Singleton);
@@ -35,8 +38,8 @@ namespace gitaround
                 typeof(Parseable.SourceTree),
             });
             container.RegisterCollection<Services.IService>(new Type[] {
-                typeof(Services.CheckOutRefProvider),
-                typeof(Services.UpdateRegistryProvider),
+                typeof(Services.CheckOutRefService),
+                typeof(Services.UpdateRegistryService),
             });
 
 #if DEBUG

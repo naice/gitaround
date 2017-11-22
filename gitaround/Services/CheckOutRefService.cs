@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace gitaround.Services
 {
-    internal class CheckOutRefProvider : IService
+    internal class CheckOutRefService : IService
     {
         private readonly ILogger _logger;
         private readonly IEnumerable<IParseable> _parseable;
@@ -14,7 +14,7 @@ namespace gitaround.Services
         private readonly Model.Configuration _configuration;
         private readonly GitAdapter.IGitAdapter _gitAdapter;
 
-        public CheckOutRefProvider(IEnumerable<IParseable> parseable, Model.CommandLineArgs commandLineArgs, Model.Configuration configuration, ILogger logger, GitAdapter.IGitAdapter gitAdapter)
+        public CheckOutRefService(IEnumerable<IParseable> parseable, Model.CommandLineArgs commandLineArgs, Model.Configuration configuration, ILogger logger, GitAdapter.IGitAdapter gitAdapter)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _commandLineArgs = commandLineArgs ?? throw new ArgumentNullException(nameof(commandLineArgs));
@@ -30,26 +30,26 @@ namespace gitaround.Services
 
             if (string.IsNullOrEmpty(url))
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"No Url given.");
+                _logger.Error(nameof(CheckOutRefService), $"No Url given.");
                 return;
             }
 
             var parsedInfo = _parseable.FirstOrDefault((parseable) => parseable.Parse(url));
             if (parsedInfo == null)
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"No parser matched Url: {url}");
+                _logger.Error(nameof(CheckOutRefService), $"No parser matched Url: {url}");
                 return;
             }
 
             if (string.IsNullOrEmpty(parsedInfo.Ref))
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"Parser matched but no Ref found. Url: {url}");
+                _logger.Error(nameof(CheckOutRefService), $"Parser matched but no Ref found. Url: {url}");
                 return;
             }
 
             if (string.IsNullOrEmpty(parsedInfo.CloneUrl))
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"Parser matched but no CloneUrl found. Url: {url}");
+                _logger.Error(nameof(CheckOutRefService), $"Parser matched but no CloneUrl found. Url: {url}");
                 return;
             }
 
@@ -57,14 +57,14 @@ namespace gitaround.Services
             repositoryConfig.Remote = repositoryConfig.Remote ?? "origin";
             if (repositoryConfig == null)
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"No repository configuration found for remote: {parsedInfo.CloneUrl}");
+                _logger.Error(nameof(CheckOutRefService), $"No repository configuration found for remote: {parsedInfo.CloneUrl}");
                 return;
             }
 
             var repositorySshCredential = _configuration.SshCredentials.FirstOrDefault(ccred => ccred.User == repositoryConfig.User);
             if (repositorySshCredential == null)
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"No ssh credentials found for User {repositoryConfig.User}. No Fetch.");
+                _logger.Error(nameof(CheckOutRefService), $"No ssh credentials found for User {repositoryConfig.User}. No Fetch.");
             }
 
             // create branch names
@@ -78,7 +78,7 @@ namespace gitaround.Services
                 _gitAdapter.OpenRepository(repositoryPath);
                 if (repositorySshCredential != null)
                 {
-                    _logger.Info(nameof(CheckOutRefProvider), $"FetchAll from {repositoryConfig.CloneUrl}.");
+                    _logger.Info(nameof(CheckOutRefService), $"FetchAll from {repositoryConfig.CloneUrl}.");
                     _gitAdapter.FetchAll(
                         repositorySshCredential.Passphrase,
                         repositorySshCredential.PrivateKeyFile,
@@ -86,12 +86,12 @@ namespace gitaround.Services
                         "git");
                 }
 
-                _logger.Info(nameof(CheckOutRefProvider), $"Checkout branch {branchName}.");
+                _logger.Info(nameof(CheckOutRefService), $"Checkout branch {branchName}.");
                 _gitAdapter.CheckoutBranch(branchName, remoteName);
             }
             catch (Exception ex)
             {
-                _logger.Error(nameof(CheckOutRefProvider), $"Error while processing git commands. {ex.Message}");
+                _logger.Error(nameof(CheckOutRefService), $"Error while processing git commands. {ex.Message}");
             }
             finally
             {
@@ -99,7 +99,7 @@ namespace gitaround.Services
             }
 
 
-            _logger.Info(nameof(CheckOutRefProvider), $"Done.");
+            _logger.Info(nameof(CheckOutRefService), $"Done.");
         }
 
     }

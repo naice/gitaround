@@ -24,11 +24,11 @@ namespace gitaround.Provider
 
             if (_commandLineArgs.IsUpdateRegistry)
             {
-                concreteType = typeof(Services.UpdateRegistryProvider);
+                concreteType = typeof(Services.UpdateRegistryService);
             }
             else if (!string.IsNullOrEmpty(_commandLineArgs.Url))
             {
-                concreteType = typeof(Services.CheckOutRefProvider);
+                concreteType = typeof(Services.CheckOutRefService);
             }
 
             if (concreteType != null)

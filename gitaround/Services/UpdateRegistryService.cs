@@ -6,12 +6,12 @@ using gitaround.Provider;
 
 namespace gitaround.Services
 {
-    internal class UpdateRegistryProvider : IService
+    internal class UpdateRegistryService : IService
     {
         const string MY_KEY = "sourcetree";
         private readonly ILogger _logger;
         private readonly Model.ApplicationPath _appPath;
-        public UpdateRegistryProvider(ILogger logger, Model.ApplicationPath appPath)
+        public UpdateRegistryService(ILogger logger, Model.ApplicationPath appPath)
         {
             _logger = logger;
             _appPath = appPath;
@@ -25,7 +25,7 @@ namespace gitaround.Services
             {
                 if (sourceTreeKey != null)
                 {
-                    _logger.Info(nameof(UpdateRegistryProvider), $"sourcetree key found, delete.");
+                    _logger.Info(nameof(UpdateRegistryService), $"sourcetree key found, delete.");
 
                     try
                     {
@@ -33,22 +33,22 @@ namespace gitaround.Services
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        _logger.Info(nameof(UpdateRegistryProvider), $"Can not delete sourcetree key, need higher privileges. {ex.Message}");
+                        _logger.Info(nameof(UpdateRegistryService), $"Can not delete sourcetree key, need higher privileges. {ex.Message}");
                     }
                 }
 
                 try
                 {
-                    _logger.Info(nameof(UpdateRegistryProvider), $"creating new sourcetree key");
+                    _logger.Info(nameof(UpdateRegistryService), $"creating new sourcetree key");
                     RegisterSourceTreeHookCustomURIScheme(classesRoot);
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    _logger.Error(nameof(UpdateRegistryProvider), $"Can not create SourceTree Custom scheme hook. {ex.Message}");
+                    _logger.Error(nameof(UpdateRegistryService), $"Can not create SourceTree Custom scheme hook. {ex.Message}");
                 }
             }
 
-            _logger.Info(nameof(UpdateRegistryProvider), $"Done.");
+            _logger.Info(nameof(UpdateRegistryService), $"Done.");
             Console.Read();
         }
 
