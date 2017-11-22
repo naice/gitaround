@@ -70,11 +70,11 @@
     <Compile Include="Parseable\SourceTree.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Provider\CheckOutRefProvider.cs" />
-    <Compile Include="Provider\IProgram.cs" />
+    <Compile Include="Provider\ServiceProvider.cs" />
+    <Compile Include="Services\CheckOutRefService.cs" />
+    <Compile Include="Services\IService.cs" />
     <Compile Include="Provider\Logger.cs" />
-    <Compile Include="Provider\NoProgramFoundProvider.cs" />
-    <Compile Include="Provider\UpdateRegistryProvider.cs" />
+    <Compile Include="Services\UpdateRegistryService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

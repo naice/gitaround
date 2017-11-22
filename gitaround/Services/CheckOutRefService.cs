@@ -1,15 +1,13 @@
 ﻿using gitaround.Parseable;
+using gitaround.Provider;
 using LibGit2Sharp;
-using SimpleInjector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace gitaround.Provider
+namespace gitaround.Services
 {
-    internal class CheckOutRefProvider : IProgram
+    internal class CheckOutRefProvider : IService
     {
         private readonly ILogger _logger;
         private readonly IEnumerable<IParseable> _parseable;

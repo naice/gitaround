@@ -14,8 +14,8 @@ namespace gitaround
         static void Main(string[] args)
         {
             Container = CreateIoCContainer(args);
-            var program = Container.GetInstance<Provider.IProgram>();
-            program.Run();
+            var serviceProvider = Container.GetInstance<Provider.ServiceProvider>();
+            serviceProvider.Launch();
         }
 
         private static Container CreateIoCContainer(string[] args)
@@ -31,11 +31,10 @@ namespace gitaround
             container.RegisterCollection<Parseable.IParseable>(new Type[] {
                 typeof(Parseable.SourceTree),
             });
-            container.RegisterConditional<Provider.IProgram, Provider.CheckOutRefProvider>(Lifestyle.Transient, IProgramPerdicate);
-            container.RegisterConditional<Provider.IProgram, Provider.UpdateRegistryProvider>(Lifestyle.Transient, IProgramPerdicate);
-            container.RegisterConditional<Provider.IProgram, Provider.NoProgramFoundProvider>(Lifestyle.Transient, IProgramPerdicate);
-
-
+            container.RegisterCollection<Services.IService>(new Type[] {
+                typeof(Services.CheckOutRefProvider),
+                typeof(Services.UpdateRegistryProvider),
+            });
 
 #if DEBUG
             container.Verify();
@@ -43,21 +42,5 @@ namespace gitaround
             return container;
         }
 
-        private static bool IProgramPerdicate(PredicateContext context)
-        {
-            var cmdArgs = Container.GetInstance<Model.CommandLineArgs>();
-
-            if (cmdArgs.IsUpdateRegistry)
-            {
-                return context.ImplementationType == typeof(Provider.UpdateRegistryProvider);
-            }
-
-            if (!string.IsNullOrEmpty(cmdArgs.Url))
-            {
-                return context.ImplementationType == typeof(Provider.CheckOutRefProvider);
-            }
-            
-            return context.ImplementationType == typeof(Provider.NoProgramFoundProvider);
-        }
     }
 }

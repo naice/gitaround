@@ -2,10 +2,11 @@
 using Microsoft.Win32;
 using System.IO;
 using SimpleInjector;
+using gitaround.Provider;
 
-namespace gitaround.Provider
+namespace gitaround.Services
 {
-    internal class UpdateRegistryProvider : IProgram
+    internal class UpdateRegistryProvider : IService
     {
         const string MY_KEY = "sourcetree";
         private readonly ILogger _logger;
