@@ -1,6 +1,5 @@
 ﻿using gitaround.Parseable;
 using gitaround.Provider;
-using LibGit2Sharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +12,15 @@ namespace gitaround.Services
         private readonly IEnumerable<IParseable> _parseable;
         private readonly Model.CommandLineArgs _commandLineArgs;
         private readonly Model.Configuration _configuration;
+        private readonly GitAdapter.IGitAdapter _gitAdapter;
 
-        public CheckOutRefProvider(IEnumerable<IParseable> parseable, Model.CommandLineArgs commandLineArgs, Model.Configuration configuration, ILogger logger)
+        public CheckOutRefProvider(IEnumerable<IParseable> parseable, Model.CommandLineArgs commandLineArgs, Model.Configuration configuration, ILogger logger, GitAdapter.IGitAdapter gitAdapter)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _commandLineArgs = commandLineArgs ?? throw new ArgumentNullException(nameof(commandLineArgs));
             _parseable = parseable ?? throw new ArgumentNullException(nameof(parseable));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _gitAdapter = gitAdapter ?? throw new ArgumentNullException(nameof(gitAdapter));
         }
 
         public void Run()
@@ -70,13 +71,15 @@ namespace gitaround.Services
             var branchName = parsedInfo.Ref.Replace("refs/heads/", "");
             var remoteName = repositoryConfig.Remote;
             var repositoryPath = repositoryConfig.Local;
-            
-            using (var repo = new Repository(repositoryPath))
+
+
+            try
             {
+                _gitAdapter.OpenRepository(repositoryPath);
                 if (repositorySshCredential != null)
                 {
                     _logger.Info(nameof(CheckOutRefProvider), $"FetchAll from {repositoryConfig.CloneUrl}.");
-                    FetchAll(repo,
+                    _gitAdapter.FetchAll(
                         repositorySshCredential.Passphrase,
                         repositorySshCredential.PrivateKeyFile,
                         repositorySshCredential.PublicKeyFile,
@@ -84,63 +87,20 @@ namespace gitaround.Services
                 }
 
                 _logger.Info(nameof(CheckOutRefProvider), $"Checkout branch {branchName}.");
-                CheckoutBranch(repo, branchName, remoteName);
+                _gitAdapter.CheckoutBranch(branchName, remoteName);
             }
+            catch (Exception ex)
+            {
+                _logger.Error(nameof(CheckOutRefProvider), $"Error while processing git commands. {ex.Message}");
+            }
+            finally
+            {
+                _gitAdapter.CloseRepository();
+            }
+
+
             _logger.Info(nameof(CheckOutRefProvider), $"Done.");
         }
 
-        private Branch CheckoutBranch(Repository repo, string branchName, string remoteName)
-        {
-            var localBranchCanonicalName = $"refs/heads/{branchName}";
-            var remoteBranchCanonicalName = $"refs/remotes/{remoteName}/{branchName}";
-
-
-            var remoteBranch = repo.Branches.FirstOrDefault((rbranch) => rbranch.CanonicalName == remoteBranchCanonicalName);
-            var localBranch = repo.Branches.FirstOrDefault((rbranch) => rbranch.CanonicalName == localBranchCanonicalName);
-
-            if (remoteBranch == null)
-            {
-                _logger.Error(nameof(CheckOutRefProvider), $"Remote branch not found. {remoteBranchCanonicalName}");
-                return null;
-            }
-
-            if (localBranch == null)
-            {
-                localBranch = repo.Branches.Add(branchName, remoteBranch.Tip);
-                repo.Branches.Update(localBranch, p => p.TrackedBranch = remoteBranch.CanonicalName);
-            }
-
-            return Commands.Checkout(repo, localBranch, new CheckoutOptions() { CheckoutModifiers = CheckoutModifiers.None });
-        }
-
-        private void FetchAll(Repository repo, string passphrase, string privateKey, string publicKey, string userName)
-        {
-            var sshCred = new SshUserKeyCredentials()
-            {
-                Passphrase = passphrase,
-                PrivateKey = privateKey,
-                PublicKey = publicKey,
-                Username = userName,
-            };
-
-            FetchOptions options = new FetchOptions()
-            {
-                CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler((_, __, ___) => sshCred),
-            };
-
-            foreach (Remote remote in repo.Network.Remotes)
-            {
-                IEnumerable<string> refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-
-                try
-                {
-                    Commands.Fetch(repo, remote.Name, refSpecs, options, "");
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error(nameof(CheckOutRefProvider), $"Could not fetch all on \"{remote.Url}\". {ex.Message}");
-                }
-            }
-        }
     }
 }

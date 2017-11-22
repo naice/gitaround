@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Factories\ConfigurationFactory.cs" />
+    <Compile Include="GitAdapter\IGitAdapter.cs" />
+    <Compile Include="GitAdapter\LibGit2SharpGitAdapter.cs" />
     <Compile Include="Model\ApplicationPath.cs" />
     <Compile Include="Model\CommandLineArgs.cs" />
     <Compile Include="Model\Configuration.cs" />
