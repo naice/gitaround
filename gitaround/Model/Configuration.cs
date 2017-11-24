@@ -20,7 +20,7 @@ namespace gitaround.Model
         }
         public Configuration(ApplicationPath path)
         {
-            LogFilePath = path.AppPathAndNameWithoutExtension + ".log";
+            LogFilePath = "%APPPATH%\\" + path.AppNameWithoutExtension + ".log";
         }
     }
 }
