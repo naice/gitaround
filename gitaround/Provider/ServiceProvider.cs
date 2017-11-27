@@ -41,6 +41,7 @@ namespace gitaround.Provider
                 }
 
                 service.Run();
+                return;
             }
 
 
