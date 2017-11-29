@@ -100,6 +100,9 @@ namespace gitaround.Services
 
 
             _logger.Info(nameof(CheckOutRefService), $"Done.");
+
+
+            Console.ReadKey();
         }
 
     }

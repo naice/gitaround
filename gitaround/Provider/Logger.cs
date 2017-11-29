@@ -31,12 +31,18 @@ namespace gitaround.Provider
 
         public void Error(string where, string msg)
         {
+            var currentColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             WriteLineFormatted("Error", where, msg);
+            Console.ForegroundColor = currentColor;
         }
 
         public void Info(string where, string msg)
         {
+            var currentColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Gray;
             WriteLineFormatted("Info", where, msg);
+            Console.ForegroundColor = currentColor;
         }
 
         private void WriteLineFormatted(string type, string where, string msg)
