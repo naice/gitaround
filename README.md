@@ -7,3 +7,25 @@ replace it with itself.
 
 The configuration is done in gitaround-config.json. You need to define Repositories and SshCredentials, they will be linked by the User field.
 All fields are mandatory for the service to work. If you dont got a passphrase for your ssh keys just fill it with anything you like.
+
+```json
+{
+  "LogFilePath": "%APPPATH%\\gitaround.log",
+  "Repositories": [
+    {
+      "Local": "C:\\Path_to_your_project",
+      "CloneUrl": "ssh://git@clone.url/project.git",
+      "Remote": "origin",
+      "User": "jmarchewka"
+    }
+  ],
+  "SshCredentials": [
+    {
+      "Passphrase" : "idk",
+      "PublicKeyFile":  "C:\\Users\\jmarchewka\\ssh\\public.pub",
+      "PrivateKeyFile": "C:\\Users\\jmarchewka\\ssh\\private",
+      "User": "jmarchewka"
+    }
+  ]
+}
+```
