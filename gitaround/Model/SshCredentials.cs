@@ -11,6 +11,6 @@ namespace gitaround.Model
         public string PrivateKeyFile { get; set; } = "";
         public string PublicKeyFile { get; set; } = "";
         public string User { get; set; } = "";
-        public string Passphrase { get; set; } = "";
+        public string Passphrase { get; set; } = "idk";
     }
 }

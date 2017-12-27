@@ -54,12 +54,12 @@ namespace gitaround.Services
             }
 
             var repositoryConfig = _configuration.Repositories.FirstOrDefault(crepo => crepo.CloneUrl == parsedInfo.CloneUrl);
-            repositoryConfig.Remote = repositoryConfig.Remote ?? "origin";
             if (repositoryConfig == null)
             {
                 _logger.Error(nameof(CheckOutRefService), $"No repository configuration found for remote: {parsedInfo.CloneUrl}");
                 return;
             }
+            repositoryConfig.Remote = repositoryConfig.Remote ?? "origin";
 
             var repositorySshCredential = _configuration.SshCredentials.FirstOrDefault(ccred => ccred.User == repositoryConfig.User);
             if (repositorySshCredential == null)
