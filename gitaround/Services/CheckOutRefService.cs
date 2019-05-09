@@ -75,27 +75,16 @@ namespace gitaround.Services
 
             try
             {
-                _gitAdapter.OpenRepository(repositoryPath);
-                if (repositorySshCredential != null)
-                {
-                    _logger.Info(nameof(CheckOutRefService), $"FetchAll from {repositoryConfig.CloneUrl}.");
-                    _gitAdapter.FetchAll(
-                        repositorySshCredential.Passphrase,
-                        repositorySshCredential.PrivateKeyFile,
-                        repositorySshCredential.PublicKeyFile,
-                        "git");
-                }
-
                 _logger.Info(nameof(CheckOutRefService), $"Checkout branch {branchName}.");
-                _gitAdapter.CheckoutBranch(branchName, remoteName);
+                var result = _gitAdapter.CheckoutBranch(repositoryPath, branchName, remoteName);
+                if (!string.IsNullOrEmpty(result.Error))
+                    _logger.Error(nameof(CheckOutRefService), result.Error);
+                if (!string.IsNullOrEmpty(result.Result))
+                    _logger.Info(nameof(CheckOutRefService), result.Result);
             }
             catch (Exception ex)
             {
                 _logger.Error(nameof(CheckOutRefService), $"Error while processing git commands. {ex.Message}");
-            }
-            finally
-            {
-                _gitAdapter.CloseRepository();
             }
 
 

@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace gitaround.GitAdapter
 {
+    public class GitResult
+    {
+        public string Result { get; set; }
+        public string Error { get; set; }
+    }
+
     interface IGitAdapter
     {
-        void OpenRepository(string path);
-        void CloseRepository();
-        void FetchAll(string passphrase, string privateKey, string publicKey, string userName);
-        void CheckoutBranch(string branchName, string remoteName);
+        GitResult CheckoutBranch(string projectPath, string branchName, string remoteName);
     }
 }

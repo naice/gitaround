@@ -1,6 +1,6 @@
 ﻿namespace gitaround.Model
 {
-    internal class Repository
+    public class Repository
     {
         public string Local { get; set; } = "local path to project.";
         public string CloneUrl { get; set; } = "bitbucket, clone url of project.";

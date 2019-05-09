@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace gitaround.Model
 {
-    internal class ApplicationPath
+    public class ApplicationPath
     {
         public string App { get; set; }
         public string AppNameWithoutExtension { get; set; }

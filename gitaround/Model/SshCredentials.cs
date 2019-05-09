@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace gitaround.Model
 {
-    internal class SshCredentials
+    public class SshCredentials
     {
         public string PrivateKeyFile { get; set; } = "";
         public string PublicKeyFile { get; set; } = "";

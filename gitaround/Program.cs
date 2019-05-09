@@ -31,13 +31,13 @@ namespace gitaround
             container.Register<Provider.ILogger, Provider.Logger>(Lifestyle.Singleton);
 
             // Adapter
-            container.Register<GitAdapter.IGitAdapter, GitAdapter.LibGit2SharpGitAdapter>();
+            container.Register<GitAdapter.IGitAdapter, GitAdapter.GitConsoleAdapter>();
 
             // Business
-            container.RegisterCollection<Parseable.IParseable>(new Type[] {
+            container.Collection.Register<Parseable.IParseable>(new Type[] {
                 typeof(Parseable.SourceTree),
             });
-            container.RegisterCollection<Services.IService>(new Type[] {
+            container.Collection.Register<Services.IService>(new Type[] {
                 typeof(Services.CheckOutRefService),
                 typeof(Services.UpdateRegistryService),
             });
